@@ -7,7 +7,7 @@ This fork includes modifications for building on Windows with Visual Studio 2022
 ## Changes For Building On Windows
 
 The `__builtin_bswap*()` functions aren't available with the MSVC compiler, so are substituted here with MSVC's `_byteswap_*()` functions.
-Optionally, the C++23 standard library's type-agnostic `std::byteswap()` function can be used with the `-CXX23` switch in the [build script](./build-windows.ps1).
+Optionally, the C++23 standard library's type-agnostic `std::byteswap()` function can be used with the `-CXX23` switch in the [build script](./Build-Windows.ps1).
 
 ## Licenses
 
@@ -17,7 +17,7 @@ The license notices in each source file are updated additionally to document cha
 
 ## Building
 
-You can run the [build script](./build-windows.ps1) directly from PowerShell or via the batch file wrapper.
+You can run the [build script](./Build-Windows.ps1) directly from PowerShell or via the batch file wrapper.
 The build script will try to load the VS2022 VC++ Developer environment if launched from an ordinary CMD/PowerShell session, and find a CMake executable.
 
 Build script usage:
@@ -52,8 +52,9 @@ abxtool abx2xml [-mr] [-i] input [output]
 abxtool xml2abx [-i] input [output]
 ```
 
-- When invoked with the '-i' argument, the output of a successful conversion will overwrite the original input file.
-- Output can be '-' to use `stdout`.
+- When invoked with the `-i` argument, the output of a successful conversion will overwrite the original input file.
+- For abx2xml, output can be '-' to use `stdout`.
+- For xml2abx, input can be '-' to use `stdin`.
 
 ## Credits
 
