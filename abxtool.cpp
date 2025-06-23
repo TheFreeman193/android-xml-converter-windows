@@ -1,4 +1,4 @@
-/*Copyright [2025] [rhythmcache]
+/*Copyright 2025 rhythmcache
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@ limitations under the License.
 
 /*
 This C++ implementation originates from:
+https://github.com/TheFreeman193/android-xml-converter-windows/
+
+and is derived from:
 https://github.com/rhythmcache/android-xml-converter/
 */
 
@@ -118,38 +121,38 @@ private:
         int16_t val;
         if (!stream.read(reinterpret_cast<char*>(&val), 2))
             throw std::runtime_error("Could not read short");
-        return __builtin_bswap16(val);
+        return _byteswap_ushort(val);
     }
     uint16_t read_unsigned_short() {
         uint16_t val;
         if (!stream.read(reinterpret_cast<char*>(&val), 2))
             throw std::runtime_error("Could not read unsigned short");
-        return __builtin_bswap16(val);
+        return _byteswap_ushort(val);
     }
     int32_t read_int() {
         int32_t val;
         if (!stream.read(reinterpret_cast<char*>(&val), 4))
             throw std::runtime_error("Could not read int");
-        return __builtin_bswap32(val);
+        return _byteswap_ulong(val);
     }
     int64_t read_long() {
         int64_t val;
         if (!stream.read(reinterpret_cast<char*>(&val), 8))
             throw std::runtime_error("Could not read long");
-        return __builtin_bswap64(val);
+        return _byteswap_uint64(val);
     }
     float read_float() {
         float val;
         if (!stream.read(reinterpret_cast<char*>(&val), 4))
             throw std::runtime_error("Could not read float");
-        val = __builtin_bswap32(*reinterpret_cast<int32_t*>(&val));
+        val = _byteswap_ulong(*reinterpret_cast<int32_t*>(&val));
         return val;
     }
     double read_double() {
         double val;
         if (!stream.read(reinterpret_cast<char*>(&val), 8))
             throw std::runtime_error("Could not read double");
-        val = __builtin_bswap64(*reinterpret_cast<int64_t*>(&val));
+        val = _byteswap_uint64(*reinterpret_cast<int64_t*>(&val));
         return val;
     }
     std::string read_string_raw() {
@@ -566,7 +569,7 @@ private:
     }
     void write_string(const std::string& str) {
         uint16_t length = str.length();
-        uint16_t be_length = __builtin_bswap16(length);
+        uint16_t be_length = _byteswap_ushort(length);
         output_stream.write(reinterpret_cast<char*>(&be_length), 2);
         output_stream.write(str.data(), length);
     }
@@ -574,11 +577,11 @@ private:
         auto it = std::find(interned_strings.begin(), interned_strings.end(), str);
         if (it != interned_strings.end()) {
             int16_t index = std::distance(interned_strings.begin(), it);
-            int16_t be_index = __builtin_bswap16(index);
+            int16_t be_index = _byteswap_ushort(index);
             output_stream.write(reinterpret_cast<char*>(&be_index), 2);
         } else {
             int16_t index = -1;
-            int16_t be_index = __builtin_bswap16(index);
+            int16_t be_index = _byteswap_ushort(index);
             output_stream.write(reinterpret_cast<char*>(&be_index), 2);
             write_string(str);
             interned_strings.push_back(str);

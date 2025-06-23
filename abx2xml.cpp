@@ -1,4 +1,19 @@
-/*
+/*Copyright 2025 rhythmcache
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+/* Original source license:
 Copyright 2021-2024, CCL Forensics
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -17,22 +32,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-
-
 /*
-While this C++ implementation originates from:
+This C++ implementation originates from:
 
-"https://github.com/rhythmcache/android-xml-converter"
+https://github.com/TheFreeman193/android-xml-converter-windows/
+
+and is derived from:
+https://github.com/rhythmcache/android-xml-converter/
 
 most of the inspiration and core logic are adapted from:
 
 "https://github.com/cclgroupltd/android-bits/blob/main/ccl_abx/ccl_abx.py"
-
-Due to this, I am including the original license text above to comply with the
-original licensing terms.
 */
-
-
 
 #include <iostream>
 #include <fstream>
@@ -129,35 +140,35 @@ private:
         int16_t val;
         if (!stream.read(reinterpret_cast<char*>(&val), 2))
             throw std::runtime_error("Could not read short");
-        return __builtin_bswap16(val);
+        return _byteswap_ushort(val);
     }
 
     uint16_t read_unsigned_short() {
         uint16_t val;
         if (!stream.read(reinterpret_cast<char*>(&val), 2))
             throw std::runtime_error("Could not read unsigned short");
-        return __builtin_bswap16(val);
+        return _byteswap_ushort(val);
     }
 
     int32_t read_int() {
         int32_t val;
         if (!stream.read(reinterpret_cast<char*>(&val), 4))
             throw std::runtime_error("Could not read int");
-        return __builtin_bswap32(val);
+        return _byteswap_ulong(val);
     }
 
     int64_t read_long() {
         int64_t val;
         if (!stream.read(reinterpret_cast<char*>(&val), 8))
             throw std::runtime_error("Could not read long");
-        return __builtin_bswap64(val);
+        return _byteswap_uint64(val);
     }
 
     float read_float() {
         float val;
         if (!stream.read(reinterpret_cast<char*>(&val), 4))
             throw std::runtime_error("Could not read float");
-        val = __builtin_bswap32(*reinterpret_cast<int32_t*>(&val));
+        val = _byteswap_ulong(*reinterpret_cast<int32_t*>(&val));
         return val;
     }
 
@@ -165,7 +176,7 @@ private:
         double val;
         if (!stream.read(reinterpret_cast<char*>(&val), 8))
             throw std::runtime_error("Could not read double");
-        val = __builtin_bswap64(*reinterpret_cast<int64_t*>(&val));
+        val = _byteswap_uint64(*reinterpret_cast<int64_t*>(&val));
         return val;
     }
 
