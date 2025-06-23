@@ -1,0 +1,7 @@
+.vscode/
+/out/
+/local/
+/CMakeLists.txt
+/*_cxx23.cpp
+/build/
+/build.old/
