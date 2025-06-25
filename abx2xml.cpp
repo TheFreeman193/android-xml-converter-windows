@@ -45,7 +45,9 @@ most of the inspiration and core logic are adapted from:
 "https://github.com/cclgroupltd/android-bits/blob/main/ccl_abx/ccl_abx.py"
 */
 
+#pragma warning( disable : 4244 4267 )
 #include <iostream>
+#include <cctype>
 #include <fstream>
 #include <vector>
 #include <string>
@@ -326,7 +328,7 @@ public:
                 std::string value = read_string_raw();
 
                 // Ignore whitespace
-                if (std::all_of(value.begin(), value.end(), ::isspace))
+                if (std::all_of(value.begin(), value.end(), [](unsigned char c){ return std::isspace(c); }))
                     continue;
 
                 if (element_stack.empty())

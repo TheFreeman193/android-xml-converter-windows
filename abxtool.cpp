@@ -22,6 +22,7 @@ and is derived from:
 https://github.com/rhythmcache/android-xml-converter/
 */
 
+#pragma warning( disable : 4244 4267 )
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -277,7 +278,7 @@ public:
             }
             else if (xml_type == static_cast<uint8_t>(XmlType::TEXT)) {
                 std::string value = read_string_raw();
-                if (std::all_of(value.begin(), value.end(), ::isspace))
+                if (std::all_of(value.begin(), value.end(), [](unsigned char c){ return std::isspace(c); }))
                     continue;
                 if (element_stack.empty())
                     throw AbxDecodeError("Unexpected TEXT outside of element");
@@ -404,12 +405,12 @@ private:
     std::string xml_content;
     size_t pos = 0;
     std::string trim(const std::string& str) {
-        auto start = std::find_if_not(str.begin(), str.end(), ::isspace);
-        auto end = std::find_if_not(str.rbegin(), str.rend(), ::isspace).base();
+        auto start = std::find_if_not(str.begin(), str.end(), [](unsigned char c){ return std::isspace(c); });
+        auto end = std::find_if_not(str.rbegin(), str.rend(), [](unsigned char c){ return std::isspace(c); }).base();
         return (start < end) ? std::string(start, end) : "";
     }
     void skip_whitespace() {
-        while (pos < xml_content.length() && ::isspace(xml_content[pos])) pos++;
+        while (pos < xml_content.length() && std::isspace(static_cast<unsigned char>(xml_content[pos]))) pos++;
     }
     std::pair<std::string, std::string> parse_attribute() {
         skip_whitespace();
@@ -627,7 +628,7 @@ private:
             writer.write_end_tag(node.name);
         }
         else if (node.type == XmlNode::Type::TEXT) {
-            if (!std::all_of(node.text.begin(), node.text.end(), ::isspace)) {
+            if (!std::all_of(node.text.begin(), node.text.end(), [](unsigned char c){ return std::isspace(c); })) {
                 writer.write_text(node.text);
             }
         }
