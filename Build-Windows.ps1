@@ -23,8 +23,8 @@ using namespace System.IO
 param(
     # Build architecture
     [Parameter(ParameterSetName = 'Build')]
-    [ValidateSet('x64', 'x86')]
-    [string]$BuildArch = 'x64',
+    [ValidateSet('x64', 'x86', 'arm64', 'arm')]
+    [string]$BuildArch = $($env:PROCESSOR_ARCHITECTURE.ToLowerInvariant() -replace 'amd64', 'x64'),
     # Build type (for debug symbols)
     [Parameter(ParameterSetName = 'Build')]
     [ValidateSet('Release', 'Debug')]
@@ -68,6 +68,7 @@ begin {
     $AppVersion = '0.1.0'
     $CXXNewVer = '23'
     $CXXNewSuffix = "_cxx$CXXNewVer"
+    $ARM32Sdk = '10.0.22621.0'
 
     # If we're building with C++23 standard, configure CMakeLists for it
     if ($CXX23) {
@@ -156,6 +157,18 @@ process {
         }
     }
 
+    # ARM32 Cross-compile SDK overrides
+    if ($BuildArch -eq 'arm') {
+        $WinSdkOverride = @"
+
+set(CMAKE_SYSTEM_VERSION $ARM32Sdk)
+set(CMAKE_CXX_COMPILER_WORKS 1)
+
+"@
+    } else {
+        $WinSdkOverride = ''
+    }
+
     # Find a CMake executable
     Write-Host -fo White 'Detecting CMake executable...'
     foreach ($CMakeCmd in
@@ -193,7 +206,7 @@ process {
     # Generate CMake lists
     Set-Content 'CMakeLists.txt' -Value @"
 cmake_minimum_required(VERSION $CMakeMinVersion)
-
+$WinSdkOverride
 project(android_xml_converter LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD $CXXVer)
@@ -282,9 +295,9 @@ set_target_properties(abxtool PROPERTIES VERSION $AppVersion)
     Builds for x64 (64-bit) Windows in release mode, using a temporary directory for build files and installing
     the resulting .exe binaries in C:\abxtools. The temporary directory will be deleted after the build.
 .EXAMPLE
-    .\Build-Windows.ps1 -BuildArch x86 -CXX23
+    .\Build-Windows.ps1 -BuildArch arm64 -CXX23
 
-    Builds for x86 (32-bit) Windows using the C++23 standard libraries instead of MSVC ones for byte operations,
+    Builds for ARM64 (64-bit) Windows using the C++23 standard libraries instead of MSVC ones for byte operations,
     using .\build and .\out directories.
 .EXAMPLE
     .\Build-Windows.ps1 -Clean
