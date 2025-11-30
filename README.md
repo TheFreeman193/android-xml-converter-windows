@@ -1,5 +1,11 @@
 # Android ABX/XML Converter for Windows
 
+## November 2025
+
+**The [upstream source](https://github.com/rhythmcache/android-xml-converter) now compiles without modifications on Windows with MSVC and this fork is no longer needed.**
+
+---
+
 This is an experimental project to convert between XML and Android Binary XML formats. Functionality is not guaranteed.
 
 This fork includes modifications for building on Windows with Visual Studio 2022 for MSVC 17.
